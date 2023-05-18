@@ -1,5 +1,5 @@
 // Google Books document (1.0)
-// https://github.com/risolvipro/collections/sources/
+// https://github.com/risolvipro/collections
 
 let volume = app.api.googleBooks.getVolume(app.params.id);
 

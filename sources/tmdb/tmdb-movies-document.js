@@ -1,5 +1,5 @@
 // TMDB movies document (1.0)
-// https://github.com/risolvipro/collections/sources/
+// https://github.com/risolvipro/collections
 
 app.api.tmdb.api_key = "YOUR API KEY";
 app.api.tmdb.language = "en-US";
