@@ -98,11 +98,13 @@ app.classes.api.googleBooks.volume = class {
 
     get authors() {
         let authors = [];
-        for(let name of this.volumeInfo.authors) {
-            let author = app.document.builder();
-            author.setIdentifier("name");
-            author.setString(name, "name");
-            authors.push(author);
+        if(this.volumeInfo.authors != undefined){
+            for(let name of this.volumeInfo.authors) {
+                let author = app.document.builder();
+                author.setIdentifier("name");
+                author.setString(name, "name");
+                authors.push(author);
+            }
         }
         return authors;
     }

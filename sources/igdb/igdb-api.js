@@ -1,4 +1,4 @@
-// IGDB library (1.0)
+// IGDB library (1.1)
 
 app.classes.api.igdb = class {
     #baseFields
@@ -6,9 +6,10 @@ app.classes.api.igdb = class {
     constructor() {
         this.client_id = "";
         this.client_secret = "";
-        this.#baseFields = ["name", "cover.*", "platforms.*", "first_release_date", "genres.*"];
+        this.#baseFields = ["name", "cover.*", "platforms.*", "first_release_date", "genres.*", "summary"];
         this.extraFields = [];
         this.gameClass = app.classes.api.igdb.game;
+        this.apiErrorMessage = "In order to use this feature, please register your personal API Keys at igdb.com/api";
     }
 
     #fields() {
@@ -32,6 +33,13 @@ app.classes.api.igdb = class {
         return fields.join(",");
     }
 
+    #hasApiKeys() {
+        if(this.client_id == "YOUR CLIENT ID" || this.client_secret == "YOUR CLIENT SECRET"){
+            return false;
+        }
+        return true;
+    }
+
     request(endpoint, body) {
         let access_token = app.storage.igdb_access_token;
         
@@ -47,6 +55,11 @@ app.classes.api.igdb = class {
     }
 
     search(query) {
+        if(!this.#hasApiKeys()){
+            app.api.error(this.apiErrorMessage);
+            return [];
+        }
+
         this.refreshTokenIfNeeded();
 
         let searchResults = [];
@@ -58,7 +71,7 @@ app.classes.api.igdb = class {
                 queryText = query.value;
             }
             let escapedQuery = queryText.replace('"', '\"');
-            let body = 'search "' + escapedQuery +'"; fields name,cover.*;';
+            let body = 'search "' + escapedQuery +'"; fields name,cover.*,platforms.*;';
 
             let request = this.request("/games/", body);
             let response = request.send();
@@ -69,10 +82,14 @@ app.classes.api.igdb = class {
 
                     for(let object of data) {
                         let game = new app.classes.api.igdb.game(object);
+                        let platforms = game.platforms_strings;
 
                         let searchResult = app.searchResult.new();
             
                         searchResult.title = game.name;
+                        if(platforms.length > 0){
+                            searchResult.subtitle = platforms.join(", ");
+                        }
                         searchResult.imageURL = game.dataCoverURL;
                     
                         searchResult.params = {
@@ -92,6 +109,11 @@ app.classes.api.igdb = class {
     }
 
     getGame(id) {
+         if(!this.#hasApiKeys()){
+            app.api.error(this.apiErrorMessage);
+            return undefined;
+        }
+
         this.refreshTokenIfNeeded();
 
         let access_token = app.storage.igdb_access_token;
@@ -100,7 +122,6 @@ app.classes.api.igdb = class {
 
             let request = this.request("/games/", body);
             let response = request.send();
-            let data = response.json();
 
             if(response.statusCode == 200) {
                 let data = response.json();
@@ -179,6 +200,10 @@ app.classes.api.igdb.game = class {
         return this.data.name;
     }
 
+    get summary() {
+        return this.data.summary;
+    }
+
     get dataCoverURL() {
         let url = this.data.cover?.url;
         if(url != undefined && url != null) {
@@ -225,6 +250,19 @@ app.classes.api.igdb.game = class {
         }
 
         return suggestions;
+    }
+
+    get platforms_strings() {
+        let strings = [];
+        if(this.data.platforms != undefined){
+            for(let platform of this.data.platforms){
+                let name = platform.name;
+                if(name != undefined){
+                    strings.push(name);
+                }
+            }
+        }
+        return strings;
     }
 
     get genres() {

@@ -1,4 +1,4 @@
-// IGDB search (1.0)
+// IGDB search (1.1)
 // https://github.com/risolvipro/collections
 
 app.api.igdb.client_id = "YOUR CLIENT ID";

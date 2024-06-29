@@ -101,6 +101,9 @@ app.classes.api.discogs.release = class {
                 artist.setIdentifier("discogs-id");
                 artist.setString(data.name, "name");
                 artist.setString(data.id.toString(), "discogs-id");
+
+                this.configureArtist(artist, data);
+
                 artists.push(artist);
             }
         }
@@ -145,6 +148,8 @@ app.classes.api.discogs.release = class {
 
                     track.setDecimal(hours * 3600 + minutes * 60 + seconds, "duration");
                 }
+
+                this.configureTrack(track, data);
 
                 tracks.push(track);
             }
@@ -220,6 +225,16 @@ app.classes.api.discogs.release = class {
 
     get year() {
         return parseInt(this.data.year);
+    }
+
+    configureArtist(document, data) {
+        // Configure the artist with additional data
+        // document.setString(data.name, "name");
+    }
+
+    configureTrack(document, data) {
+        // Configure the track with additional data
+        // document.setString(data.title, "title");
     }
 }
 
