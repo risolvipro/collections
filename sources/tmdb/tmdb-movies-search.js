@@ -1,4 +1,4 @@
-// TMDB movies search (1.0)
+// TMDB movies search (1.2)
 // https://github.com/risolvipro/collections
 
 app.api.tmdb.api_key = "YOUR API KEY";
