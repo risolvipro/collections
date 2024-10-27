@@ -4,6 +4,7 @@ app.classes.api.googleBooks = class {
     
     constructor() {
         this.volumeClass = app.classes.api.googleBooks.volume;
+        this.forceThumbnail = false;
     }
 
     search(query) {
@@ -112,6 +113,9 @@ app.classes.api.googleBooks.volume = class {
     requestImage() {
         if(this.volumeInfo.imageLinks != undefined){
             let sizes = ["extraLarge", "large", "medium", "small", "thumbnail", "smallThumbnail"];
+            if(app.api.googleBooks.forceThumbnail){
+                sizes = ["thumbnail", "smallThumbnail"];
+            }
         
             for(let size of sizes){
                 let imageURL = this.volumeInfo.imageLinks[size];
