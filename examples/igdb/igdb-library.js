@@ -68,9 +68,63 @@ app.library.timeToBeat = (id) => {
     return undefined;
   } else if (statusCode === 401) {
     app.api.igdb.clearToken();
-
-    return undefined;
   }
 
   return undefined;
+};
+
+app.library.search = (query) => {
+  app.api.igdb.refreshTokenIfNeeded();
+  const access_token = app.storage.igdb_access_token;
+  if (!access_token) return undefined;
+
+  const searchResults = [];
+  let queryText = "";
+
+  if (query.isText()) {
+    queryText = query.value;
+  }
+
+  const request = app.api.igdb.request(
+    "/games/",
+    `search "${queryText.replace('"', '\"')}"; limit 50; fields name,cover.*,first_release_date;`,
+  );
+  const response = request.send();
+  const { statusCode } = response;
+
+  if (statusCode === 200) {
+    const data = response.json();
+
+    if (data) {
+      const mappedResults = data.map((gameData) => {
+        const game = new app.classes.api.igdb.game(gameData);
+        const searchResult = app.searchResult.new();
+
+        searchResult.title = game.name;
+        searchResult.imageURL = game.dataCoverURL;
+        searchResult.params = {
+          id: game.id,
+        };
+
+        if (game.firstReleaseDate) {
+          searchResult.subtitle = game.firstReleaseDate.toLocaleDateString(
+            undefined,
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            },
+          );
+        }
+
+        return searchResult;
+      });
+
+      searchResults.push(...mappedResults);
+    }
+  } else if (statusCode === 401) {
+    app.api.igdb.clearToken();
+  }
+
+  return searchResults;
 };
