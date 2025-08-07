@@ -26,6 +26,7 @@ const builder = app.document.builder();
 
 builder.setImage(game.requestCover(), "cover");
 builder.setString(game.name, "title");
+builder.setListItems(app.listItem.suggest("Backlog", "Backlog"), "status");
 builder.setDecimal(game.rating, "rating");
 builder.setString(timeToBeat, "time-to-beat");
 builder.setDate(game.firstReleaseDate, "release-date");

@@ -101,7 +101,7 @@ app.library.search = (query) => {
         const searchResult = app.searchResult.new();
 
         searchResult.title = game.name;
-        searchResult.imageURL = game.dataCoverURL;
+        searchResult.imageURL = game.coverURL();
         searchResult.params = {
           id: game.id,
         };
