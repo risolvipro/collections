@@ -1,15 +1,15 @@
-// IGDB library (1.1)
+// IGDB library (1.2)
 
 app.classes.api.igdb = class {
     #baseFields
 
     constructor() {
-        this.client_id = "";
-        this.client_secret = "";
+        this.client_id = undefined;
+        this.client_secret = undefined;
         this.#baseFields = ["name", "cover.*", "platforms.*", "first_release_date", "genres.*", "summary"];
         this.extraFields = [];
         this.gameClass = app.classes.api.igdb.game;
-        this.apiErrorMessage = "In order to use this feature, please register your personal API Keys at igdb.com/api";
+        this.keyErrorMessage = "In order to use this feature, please register your personal API Keys at igdb.com/api";
     }
 
     #fields() {
@@ -34,7 +34,10 @@ app.classes.api.igdb = class {
     }
 
     #hasApiKeys() {
-        if(this.client_id == "YOUR CLIENT ID" || this.client_secret == "YOUR CLIENT SECRET"){
+        if(this.client_id === undefined || this.client_secret === undefined){
+            return false;
+        }
+        else if(this.client_id == "YOUR CLIENT ID" || this.client_secret == "YOUR CLIENT SECRET"){
             return false;
         }
         return true;
@@ -56,7 +59,8 @@ app.classes.api.igdb = class {
 
     search(query) {
         if(!this.#hasApiKeys()){
-            app.api.error(this.apiErrorMessage);
+            let error = app.error.new(this.keyErrorMessage, app.error.type.API_KEY_REQUIRED);
+            app.setError(error);
             return [];
         }
 
@@ -110,7 +114,8 @@ app.classes.api.igdb = class {
 
     getGame(id) {
          if(!this.#hasApiKeys()){
-            app.api.error(this.apiErrorMessage);
+            let error = app.error.new(this.keyErrorMessage, app.error.type.API_KEY_REQUIRED);
+            app.setError(error);
             return undefined;
         }
 

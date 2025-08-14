@@ -1,15 +1,15 @@
-// TMDB library (1.2)
+// TMDB library (1.3)
 
 app.classes.api.tmdb = class {
     
     constructor() {
-        this.api_key = "";
+        this.api_key = undefined;
         this.language = "en-US";
         this.movieClass = app.classes.api.tmdb.movie;
         this.tvClass = app.classes.api.tmdb.tv;
         this.seasonClass = app.classes.api.tmdb.season;
         this.episodeClass = app.classes.api.tmdb.episode;
-        this.apiErrorMessage = "In order to use this feature, please register your personal API Key at developer.themoviedb.org";
+        this.keyErrorMessage = "In order to use this feature, please register your personal API Key at developer.themoviedb.org";
         this.baseURL = "https://api.themoviedb.org/3";
     }
 
@@ -23,7 +23,8 @@ app.classes.api.tmdb = class {
 
     searchMovies(query) {
         if(!this.#hasApiKeys()) {
-            app.api.error(this.apiErrorMessage);
+            let error = app.error.new(this.keyErrorMessage, app.error.type.API_KEY_REQUIRED);
+            app.setError(error);
             return [];
         }
 
@@ -73,7 +74,8 @@ app.classes.api.tmdb = class {
 
     getMovie(id) {
         if(!this.#hasApiKeys()) {
-            app.api.error(this.apiErrorMessage);
+            let error = app.error.new(this.keyErrorMessage, app.error.type.API_KEY_REQUIRED);
+            app.setError(error);
             return undefined;
         }
 
@@ -115,7 +117,8 @@ app.classes.api.tmdb = class {
 
     searchTV(query) {
         if(!this.#hasApiKeys()) {
-            app.api.error(this.apiErrorMessage);
+            let error = app.error.new(this.keyErrorMessage, app.error.type.API_KEY_REQUIRED);
+            app.setError(error);
             return [];
         }
 
@@ -162,7 +165,8 @@ app.classes.api.tmdb = class {
 
     getTV(id) {
         if(!this.#hasApiKeys()) {
-            app.api.error(this.apiErrorMessage);
+            let error = app.error.new(this.keyErrorMessage, app.error.type.API_KEY_REQUIRED);
+            app.setError(error);
             return undefined;
         }
 
@@ -227,7 +231,10 @@ app.classes.api.tmdb = class {
     }
 
     #hasApiKeys() {
-        if(this.api_key == "YOUR API KEY"){
+        if(this.api_key === undefined){
+            return false;
+        }
+        else if(this.api_key == "YOUR API KEY"){
             return false;
         }
         return true;

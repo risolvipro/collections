@@ -1,8 +1,8 @@
-// TMDB movies document (1.2)
+// TMDB movies document (1.3)
 // https://github.com/risolvipro/collections
 
-app.api.tmdb.api_key = "YOUR API KEY";
-app.api.tmdb.language = "en-US";
+app.api.tmdb.api_key = app.config.API_KEY;
+app.api.tmdb.language = app.config.LANGUAGE;
 
 let movie = app.api.tmdb.getMovie(app.params.id);
 
